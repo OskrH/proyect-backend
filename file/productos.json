@@ -1,0 +1,38 @@
+[
+	{
+		"titulo": "Mouse",
+		"description": "Mouse inalámbrico ergonómico",
+		"precio": 19.99,
+		"thumbnail": "mouse.jpg",
+		"code": "MS456",
+		"stock": 30,
+		"id": 1
+	},
+	{
+		"titulo": "Teclado",
+		"description": "Teclado mecánico retroiluminado",
+		"precio": 29.99,
+		"thumbnail": "teclado.jpg",
+		"code": "KB123",
+		"stock": 50,
+		"id": 2
+	},
+	{
+		"titulo": "Teclado",
+		"description": "Teclado mecánico retroiluminado",
+		"precio": 29.99,
+		"thumbnail": "teclado.jpg",
+		"code": "KB123",
+		"stock": 50,
+		"id": 3
+	},
+	{
+		"titulo": "Mouse",
+		"description": "Mouse inalámbrico ergonómico",
+		"precio": 19.99,
+		"thumbnail": "mouse.jpg",
+		"code": "MS456",
+		"stock": 30,
+		"id": 4
+	}
+]
