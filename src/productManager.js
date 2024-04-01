@@ -1,7 +1,10 @@
-const fs = require("fs");
-const path = './file/productos.json';
+import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 
-class ProductManager {
+const path = './productos.json';
+
+
+export default class ProductManager {
     constructor(path) {
         this.products = [];
         this.path = path;
@@ -80,8 +83,11 @@ class ProductManager {
 
 
 // Ejemplo de uso de la clase ProductManager
-const manager = new ProductManager('./file/productos.json');
+const manager = new ProductManager('./productos.json');
 
 // Agregar algunos productos
 manager.addProduct({ titulo: 'Teclado', description: 'Teclado mecánico retroiluminado', precio: 29.99, thumbnail: 'teclado.jpg', code: 'KB123', stock: 50 });
 manager.addProduct({ titulo: 'Mouse', description: 'Mouse inalámbrico ergonómico', precio: 19.99, thumbnail: 'mouse.jpg', code: 'MS456', stock: 30 });
+manager.addProduct({ titulo: 'Monitor', description: 'Monitor Ful HD', precio: 59.99, thumbnail: 'monitor.jpg', code: 'MN457', stock: 40 });
+manager.addProduct({ titulo: 'Audifonos', description: 'Audifonos gamers RGB', precio: 10.99, thumbnail: 'audifonos.jpg', code: 'AS567', stock: 15 });
+manager.addProduct({ titulo: 'Mousepad', description: 'Mousepad de fibra 60x60', precio: 9.99, thumbnail: 'mousepad.jpg', code: 'MP456', stock: 70 });
