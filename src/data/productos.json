@@ -1,0 +1,11 @@
+[
+	{
+		"titulo": "Monitor",
+		"description": "Monitor Ful HD",
+		"precio": 59.99,
+		"thumbnail": "monitor.jpg",
+		"code": "MN457",
+		"stock": 40,
+		"id": 1
+	}
+]

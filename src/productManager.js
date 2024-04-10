@@ -1,93 +1,82 @@
-import fs from 'fs';
-import { promises as fsPromises } from 'fs';
+import fs1 from 'fs'
 
-const path = './productos.json';
-
+const fs = fs1.promises
 
 export default class ProductManager {
-    constructor(path) {
+    constructor() {
         this.products = [];
-        this.path = path;
+        this.PATH = './data/products.json'
+        this.id = 0;
     }
 
-    async leerArchivo() {
+    jsonSave = async (arrayAGuardar) => {
+        return await fs.writeFile(this.PATH, JSON.stringify(arrayAGuardar), "utf8")
+    }
+
+    getProducts = async () => {
+        const data = await fs.readFile(this.PATH, "utf8");
         try {
-            const productJson = await fs.promises.readFile(this.path, 'utf-8');
-            return JSON.parse(productJson);
+            const products = JSON.parse(data);
+            return products;
         } catch (error) {
             return [];
         }
-    }
+    };
 
-    async addProduct(productos) {
+    addProduct = async (title, description, price, thumbnail, code, stock) => {
         try {
-            const products = await this.leerArchivo();
-            if (products.length === 0) {
-                productos.id = 1;
-            } else {
-                productos.id = products.length + 1;
+            let products = await this.getProducts();
+            let fileExists = await fs.stat(this.PATH);
+            if (!fileExists) {
+                await fs.writeFile(this.PATH, JSON.stringify([]));
             }
-            products.push(productos);
-            await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'), 'utf-8');
-            return products;
-        } catch (error) {
+            if (!title || !description || !price || !thumbnail || !code || !stock) {
+                return await console.log("Asegurate de incluir todas las propiedades en el objeto!");
+            }
+
+            if (products.some(product => product.code === code)) {
+                return await console.log("Este código de producto ya existe");
+            }
+            let iDGenerator = products.at(-1).id;
+            this.id = iDGenerator + 1;
+            let nuevoProducto = { title, description, price, thumbnail, code, stock, id: this.id };
+            // this.products.push(nuevoProducto);
+            // await fs.writeFile('./products.JSON', JSON.stringify(this.products), 'utf-8' )
+            const arrayModificado = [...products, nuevoProducto];
+            this.jsonSave(arrayModificado);
+            console.log("Se agrego el siguiente producto: ", nuevoProducto);
+        }
+        catch (error) {
             console.log(error);
         }
 
-        if (!productos.titulo || !productos.description || !productos.precio || !productos.thumbnail || !productos.code || !productos.stock) {
-            throw new Error('Todos los campos son obligatorios.');
-        }
 
-        const existeProducto = this.products.some(p => p.code === productos.code);
-        if (existeProducto) {
-            throw new Error('Ya existe un producto con ese código.');
-        }
+    };
 
-        this.products.push(productos);
+    async getProductsById(id) {
+        let products = await this.getProducts();
+        if (products.some((product) => product.id === id)) {
+            const productoBuscado = products.find((product) => product.id === id);
+            return console.log(`Aqui está el producto buscado con el id ${id}: `, productoBuscado);
+        } else {
+            console.log(`El id ${id} no es válido`);
+        }
+    };
+
+
+    async deleteProduct(id) {
+        let arraydeproductos = JSON.parse(await fs.readFile(this.PATH, 'utf-8'));
+        if (arraydeproductos.find((producto) => producto.id === id)) {
+            let nuevoArray = arraydeproductos.filter((producto) => producto.id != id);
+            this.products = nuevoArray;
+            console.log(`El producto con id ${id} ha sido eliminado`);
+            this.jsonSave(nuevoArray);
+        }
     }
-
-    getProductById(id) {
-        const producto = this.products.find(producto => producto.id === id);
-        if (!producto) {
-            throw new Error(`El producto con Id: ${id} no se encontró.`);
-        }
-        return producto;
-    }
-
-    updateProduct(id, updatedProduct) {
-        const index = this.products.findIndex(product => product.id === id);
-        if (index === -1) {
-            throw new Error(
-                'No se puede actualizar un producto con un id que no existe'
-            );
-        }
-        this.products[index] = { ...this.products[index], ...updatedProduct };
-        fs.writeFileSync(this.path, JSON.stringify(this.products));
-        return this.products[index];
-    }
-
-    deleteProduct(id) {
-        const index = this.products.findIndex(product => product.id === id);
-        if (index === -1) {
-            throw new Error(
-                'No se puede eliminar un producto con un id que no existe'
-            );
-        }
-        const deletedProduct = this.products.splice(index, 1);
-        fs.writeFileSync(this.path, JSON.stringify(this.products));
-        return deletedProduct;
-    }
-
+    updateProduct = async ({ id, ...producto }) => {
+        await this.deleteProduct(id);
+        let arrayProductos = await this.getProducts();
+        let arrayModificado = [{ id, ...producto }, ...arrayProductos];
+        this.jsonSave(arrayModificado);
+    };
 }
-
-
-
-// Ejemplo de uso de la clase ProductManager
-const manager = new ProductManager('./productos.json');
-
-// Agregar algunos productos
-manager.addProduct({ titulo: 'Teclado', description: 'Teclado mecánico retroiluminado', precio: 29.99, thumbnail: 'teclado.jpg', code: 'KB123', stock: 50 });
-manager.addProduct({ titulo: 'Mouse', description: 'Mouse inalámbrico ergonómico', precio: 19.99, thumbnail: 'mouse.jpg', code: 'MS456', stock: 30 });
-manager.addProduct({ titulo: 'Monitor', description: 'Monitor Ful HD', precio: 59.99, thumbnail: 'monitor.jpg', code: 'MN457', stock: 40 });
-manager.addProduct({ titulo: 'Audifonos', description: 'Audifonos gamers RGB', precio: 10.99, thumbnail: 'audifonos.jpg', code: 'AS567', stock: 15 });
-manager.addProduct({ titulo: 'Mousepad', description: 'Mousepad de fibra 60x60', precio: 9.99, thumbnail: 'mousepad.jpg', code: 'MP456', stock: 70 });
